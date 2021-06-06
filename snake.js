@@ -27,7 +27,6 @@ class Snake {
 
   listenInput(key) {
     this.direction = key;
-    console.log(this.direction);
   }
 
   drawing() {
@@ -45,16 +44,16 @@ class Snake {
         this.segments[i].y = this.segments[i - 1].y;
       }
       switch (this.direction) {
-        case "w":
+        case "KeyW":
           this.segments[0].y -= 1;
           break;
-        case "s":
+        case "KeyS":
           this.segments[0].y += 1;
           break;
-        case "a":
+        case "KeyA":
           this.segments[0].x -= 1;
           break;
-        case "d":
+        case "KeyD":
           this.segments[0].x += 1;
           break;
       }
@@ -101,10 +100,11 @@ function render() {
 setInterval(render, 400);
 
 document.onkeypress = function (e) {
-  if (e.key == 'w' || e.key == 's' || e.key == 'a' || e.key == 'd') {
-    snake.listenInput(e.key.toLowerCase());
+  console.log(e.code);
+  if (e.code == 'KeyW' || e.code == 'KeyS' || e.code == 'KeyA' || e.code == 'KeyD') {
+    snake.listenInput(e.code);
     snake.sleep = false;
-  } else if (e.key == " ") {
+  } else if (e.code == 'Space') {
     snake.sleep = true;
   }
 };
