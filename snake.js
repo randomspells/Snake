@@ -20,8 +20,31 @@ let redSquare = {
   y: 300,
   size: 50,
   color: "red",
+  direction: null,
 };
 
+
+blueSquare.setDirection = function(key) {
+  this.direction = key;
+  console.log(this.direction);
+}
+
+blueSquare.moveSquare = function() {
+  switch (this.direction) {
+    case "w":
+      this.y -= this.size;
+      break;
+    case "s":
+      this.y += this.size;
+      break;
+    case "a":
+      this.x -= this.size;
+      break;
+    case "d":
+      this.x += this.size;
+      break;
+  }
+}
 
 function drawSquare(s) {
   ctx.fillStyle = s.color;
@@ -32,22 +55,8 @@ function clearField() {
   ctx.clearRect(0,0,field.width,field.height);
 }
 
-function moveSquare(s, dir) {
-  switch (dir) {
-    case "w":
-      s.y -= s.size;
-      break;
-    case "s":
-      s.y += s.size;
-      break;
-    case "a":
-      s.x -= s.size;
-      break;
-    case "d":
-      s.x += s.size;
-      break;
-  }
-}
+
+
 
 function collision(s1,s2) {
   if (s1.x == s2.x && s1.y == s2.y) {
@@ -63,11 +72,11 @@ function render() {
   drawSquare(blueSquare);
 }
 
-setInterval(render, 100);
+setInterval(render, 300);
 
 document.onkeypress = function (e) {
-  moveSquare(blueSquare, e.key);
-  collision(blueSquare,redSquare);
+  blueSquare.setDirection((e.key).toLowerCase());
+  // collision(blueSquare,redSquare);
 };
 
 // let redSquare = drawSquare(redX, redY, "red");
