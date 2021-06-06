@@ -8,8 +8,8 @@ function drawField() {
 
 drawField();
 
-class OneSegment {
-  constructor(x,y,i) {
+class Segment {
+  constructor(x, y, i) {
     this.x = x;
     this.y = y;
     this.i = i;
@@ -17,64 +17,66 @@ class OneSegment {
 }
 
 class Snake {
-  constructor(segments, color) {
+  constructor(segments, speed, color) {
     this.segments = segments;
-    this.direction = null;
-    this.speed = 0;
-    this.counter = this.segments.length;
+    this.speed = speed;
     this.color = color;
+    this.direction = null;
+    this.length = this.segments.length;
   }
 
-  
+  setDirection(key) {
+    this.direction = key;
+    console.log(this.direction);
+  }
+
+  drawing() {
+    let size = 20;
+    ctx.fillStyle = this.color;
+    for (let seg of this.segments) {
+      ctx.fillRect(seg.x * size, seg.y * size, size, size);
+    }
+  }
+
+  moving() {
+    
+  }
 }
 
 let allSegments = [];
 
 for (let i = 0; i < 3; i++) {
-  allSegments.push(new OneSegment(0+i,0,i));
+  allSegments.push(new Segment(0 + i, 0, i));
 }
 
 console.log(allSegments);
 
-let snake = {
-  x: 200,
-  y: 200,
-  size: 50,
-  color: "blue",
-  tail: []
-};
-
-snake.setDirection = function(key) {
-  this.direction = key;
-  console.log(this.direction);
-}
-
-snake.moveSquare = function() {
-  let headX = this.x;
-  let headY = this.y;
-  switch (this.direction) {
-    case "w":
-      this.y -= this.size;
-      this.tail.y = headY;
-      this.tail.x = this.x;
-      break;
-    case "s":
-      this.y += this.size;
-      this.tail.y = headY;
-      this.tail.x = this.x;
-      break;
-    case "a":
-      this.x -= this.size;
-      this.tail.y = this.y;
-      this.tail.x = headX;
-      break;
-    case "d":
-      this.x += this.size;
-      this.tail.y = this.y;
-      this.tail.x = headX;
-      break;
-  }
-}
+// snake.moveSquare = function () {
+//   let headX = this.x;
+//   let headY = this.y;
+//   switch (this.direction) {
+//     case "w":
+//       this.y -= this.size;
+//       this.tail.y = headY;
+//       this.tail.x = this.x;
+//       break;
+//     case "s":
+//       this.y += this.size;
+//       this.tail.y = headY;
+//       this.tail.x = this.x;
+//       break;
+//     case "a":
+//       this.x -= this.size;
+//       this.tail.y = this.y;
+//       this.tail.x = headX;
+//       break;
+//     case "d":
+//       this.x += this.size;
+//       this.tail.y = this.y;
+//       this.tail.x = headX;
+//       break;
+//   }
+// };
 
 let food = {
   x: 300,
@@ -84,37 +86,30 @@ let food = {
   direction: null,
 };
 
-function draw(s) {
-  // ctx.fillStyle = s.color;
-  // for (let i = 0; i < s.length; i++) {
-  for (let i of s) {
-    ctx.fillRect(i.x, i.y, i.size, i.size);
-  }
-}
-
 function clearField() {
-  ctx.clearRect(0,0,field.width,field.height);
+  ctx.clearRect(0, 0, field.width, field.height);
 }
 
-function collision(s1,s2) {
-  if (s1.x == s2.x && s1.y == s2.y) {
-    s1.color = "violet";
-  } else {
-    s1.color = "blue";
-  }
-}
+// function collision(s1, s2) {
+//   if (s1.x == s2.x && s1.y == s2.y) {
+//     s1.color = "violet";
+//   } else {
+//     s1.color = "blue";
+//   }
+// }
+
+let snake = new Snake(allSegments, 300, "tomato");
 
 function render() {
   clearField();
-  draw(snakeNew);
-  // draw(food);
-  snake.moveSquare();
+  snake.drawing();
+  // snake.moveSquare();
 }
 
 setInterval(render, 400);
 
 document.onkeypress = function (e) {
-  snake.setDirection((e.key).toLowerCase());
+  snake.setDirection(e.key.toLowerCase());
   // collision(blueSquare,redSquare);
 };
 
