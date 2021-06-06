@@ -17,15 +17,15 @@ class Segment {
 }
 
 class Snake {
-  constructor(segments, speed, color) {
+  constructor(segments, color) {
     this.segments = segments;
-    this.speed = speed;
     this.color = color;
     this.direction = null;
-    this.length = this.segments.length;
+    this.length = this.segments.length - 1;
+    this.sleep = true;
   }
 
-  setDirection(key) {
+  listenInput(key) {
     this.direction = key;
     console.log(this.direction);
   }
@@ -39,7 +39,26 @@ class Snake {
   }
 
   moving() {
-    
+    if (!this.sleep) {
+      for (let i = this.length; i > 0; i--) {
+        this.segments[i].x = this.segments[i - 1].x;
+        this.segments[i].y = this.segments[i - 1].y;
+      }
+      switch (this.direction) {
+        case "w":
+          this.segments[0].y -= 1;
+          break;
+        case "s":
+          this.segments[0].y += 1;
+          break;
+        case "a":
+          this.segments[0].x -= 1;
+          break;
+        case "d":
+          this.segments[0].x += 1;
+          break;
+      }
+    }
   }
 }
 
@@ -50,33 +69,6 @@ for (let i = 0; i < 3; i++) {
 }
 
 console.log(allSegments);
-
-// snake.moveSquare = function () {
-//   let headX = this.x;
-//   let headY = this.y;
-//   switch (this.direction) {
-//     case "w":
-//       this.y -= this.size;
-//       this.tail.y = headY;
-//       this.tail.x = this.x;
-//       break;
-//     case "s":
-//       this.y += this.size;
-//       this.tail.y = headY;
-//       this.tail.x = this.x;
-//       break;
-//     case "a":
-//       this.x -= this.size;
-//       this.tail.y = this.y;
-//       this.tail.x = headX;
-//       break;
-//     case "d":
-//       this.x += this.size;
-//       this.tail.y = this.y;
-//       this.tail.x = headX;
-//       break;
-//   }
-// };
 
 let food = {
   x: 300,
@@ -98,19 +90,23 @@ function clearField() {
 //   }
 // }
 
-let snake = new Snake(allSegments, 300, "tomato");
+let snake = new Snake(allSegments, "tomato");
 
 function render() {
   clearField();
   snake.drawing();
-  // snake.moveSquare();
+  snake.moving();
 }
 
 setInterval(render, 400);
 
 document.onkeypress = function (e) {
-  snake.setDirection(e.key.toLowerCase());
-  // collision(blueSquare,redSquare);
+  if (e.key == 'w' || e.key == 's' || e.key == 'a' || e.key == 'd') {
+    snake.listenInput(e.key.toLowerCase());
+    snake.sleep = false;
+  } else if (e.key == " ") {
+    snake.sleep = true;
+  }
 };
 
 // let redSquare = drawSquare(redX, redY, "red");
