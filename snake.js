@@ -1,21 +1,84 @@
 let field = document.getElementById("field");
 let ctx = field.getContext("2d");
 
-function draw() {
+function drawField() {
   field.width = innerWidth;
   field.height = innerHeight;
 }
 
-draw();
+drawField();
 
-let blueSquare = {
-  x: 0,
-  y: 0,
+// структура данных (что это?)
+// у змеи есть голова и хвостик
+// змея обитает на определенных координатах (ХУ)
+// у головы есть направление куда смотреть
+// хвост едет за головой (он глупый)
+// тело = очередь за колбасой
+// хвост упорядочен в вакууме
+
+class Point {
+  constructor(x,y) {
+    this.x = x;
+    this.y = y;
+    this.size = 50;
+  }
+}
+
+
+// let snake = [blueSquare,{x:50,y:0},{x:100,y:0}];
+
+let snake = {
+  x: 200,
+  y: 200,
   size: 50,
   color: "blue",
+  tail: []
 };
 
-let redSquare = {
+snake.growSnake = function() {
+  this.tail = {
+    x: this.x-this.size,
+    y: this.y,
+    size: this.size
+  }
+  console.log(this.tail);
+}
+
+snake.growSnake();
+
+snake.setDirection = function(key) {
+  this.direction = key;
+  console.log(this.direction);
+}
+
+snake.moveSquare = function() {
+  let headX = this.x;
+  let headY = this.y;
+  switch (this.direction) {
+    case "w":
+      this.y -= this.size;
+      this.tail.y = headY;
+      this.tail.x = this.x;
+      break;
+    case "s":
+      this.y += this.size;
+      this.tail.y = headY;
+      this.tail.x = this.x;
+      break;
+    case "a":
+      this.x -= this.size;
+      this.tail.y = this.y;
+      this.tail.x = headX;
+      break;
+    case "d":
+      this.x += this.size;
+      this.tail.y = this.y;
+      this.tail.x = headX;
+      break;
+  }
+}
+
+let food = {
   x: 300,
   y: 300,
   size: 50,
@@ -23,40 +86,15 @@ let redSquare = {
   direction: null,
 };
 
-
-blueSquare.setDirection = function(key) {
-  this.direction = key;
-  console.log(this.direction);
-}
-
-blueSquare.moveSquare = function() {
-  switch (this.direction) {
-    case "w":
-      this.y -= this.size;
-      break;
-    case "s":
-      this.y += this.size;
-      break;
-    case "a":
-      this.x -= this.size;
-      break;
-    case "d":
-      this.x += this.size;
-      break;
-  }
-}
-
-function drawSquare(s) {
+function draw(s) {
   ctx.fillStyle = s.color;
+  // for (let i = 0; i < s.length; i++) {
   ctx.fillRect(s.x, s.y, s.size, s.size);
 }
 
 function clearField() {
   ctx.clearRect(0,0,field.width,field.height);
 }
-
-
-
 
 function collision(s1,s2) {
   if (s1.x == s2.x && s1.y == s2.y) {
@@ -68,14 +106,16 @@ function collision(s1,s2) {
 
 function render() {
   clearField();
-  drawSquare(redSquare);
-  drawSquare(blueSquare);
+  draw(snake);
+  draw(snake.tail);
+  draw(food);
+  snake.moveSquare();
 }
 
-setInterval(render, 300);
+setInterval(render, 400);
 
 document.onkeypress = function (e) {
-  blueSquare.setDirection((e.key).toLowerCase());
+  snake.setDirection((e.key).toLowerCase());
   // collision(blueSquare,redSquare);
 };
 
