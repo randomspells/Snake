@@ -8,24 +8,33 @@ function drawField() {
 
 drawField();
 
-// структура данных (что это?)
-// у змеи есть голова и хвостик
-// змея обитает на определенных координатах (ХУ)
-// у головы есть направление куда смотреть
-// хвост едет за головой (он глупый)
-// тело = очередь за колбасой
-// хвост упорядочен в вакууме
-
-class Point {
-  constructor(x,y) {
+class OneSegment {
+  constructor(x,y,i) {
     this.x = x;
     this.y = y;
-    this.size = 50;
+    this.i = i;
   }
 }
 
+class Snake {
+  constructor(segments, color) {
+    this.segments = segments;
+    this.direction = null;
+    this.speed = 0;
+    this.counter = this.segments.length;
+    this.color = color;
+  }
 
-// let snake = [blueSquare,{x:50,y:0},{x:100,y:0}];
+  
+}
+
+let allSegments = [];
+
+for (let i = 0; i < 3; i++) {
+  allSegments.push(new OneSegment(0+i,0,i));
+}
+
+console.log(allSegments);
 
 let snake = {
   x: 200,
@@ -34,17 +43,6 @@ let snake = {
   color: "blue",
   tail: []
 };
-
-snake.growSnake = function() {
-  this.tail = {
-    x: this.x-this.size,
-    y: this.y,
-    size: this.size
-  }
-  console.log(this.tail);
-}
-
-snake.growSnake();
 
 snake.setDirection = function(key) {
   this.direction = key;
@@ -87,9 +85,11 @@ let food = {
 };
 
 function draw(s) {
-  ctx.fillStyle = s.color;
+  // ctx.fillStyle = s.color;
   // for (let i = 0; i < s.length; i++) {
-  ctx.fillRect(s.x, s.y, s.size, s.size);
+  for (let i of s) {
+    ctx.fillRect(i.x, i.y, i.size, i.size);
+  }
 }
 
 function clearField() {
@@ -106,9 +106,8 @@ function collision(s1,s2) {
 
 function render() {
   clearField();
-  draw(snake);
-  draw(snake.tail);
-  draw(food);
+  draw(snakeNew);
+  // draw(food);
   snake.moveSquare();
 }
 
