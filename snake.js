@@ -1,7 +1,5 @@
-// let field = document.getElementById("canvas");
-// let ctx = field.getContext("2d");
-// field.width = 700;
-// field.height = 700;
+const SIZE = 20;
+const SCALE = 30;
 
 class Game {
   constructor(size, scale) {
@@ -12,7 +10,7 @@ class Game {
   }
 
   clear() {
-    this.ctx.fillStyle = '#343434';
+    this.ctx.fillStyle = "#343434";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.width);
   }
 
@@ -20,11 +18,9 @@ class Game {
     this.canvas.width = this.size * scale;
     this.canvas.height = this.size * scale;
   }
-  
 }
 
-let game = new Game(20, 25);
-
+let game = new Game(SIZE, SCALE);
 
 class Segment {
   constructor(x, y, i) {
@@ -41,6 +37,7 @@ class Snake {
     this.direction = null;
     this.length = this.segments.length - 1;
     this.sleep = true;
+    this.head = this.segments[0];
   }
 
   listenInput(key) {
@@ -48,10 +45,25 @@ class Snake {
   }
 
   draw() {
-    let size = 25;
+    let size = SCALE;
     game.ctx.fillStyle = this.color;
     for (let seg of this.segments) {
       game.ctx.fillRect(seg.x * size, seg.y * size, size, size);
+    }
+  }
+
+  teleport() {
+    if (this.head.x < 0) {
+      this.head.x = SIZE - 1;
+    }
+    if (this.head.x > SIZE - 1) {
+      this.head.x = 0;
+    }
+    if (this.head.y < 0) {
+      this.head.y = SIZE - 1;
+    }
+    if (this.head.y > SIZE - 1) {
+      this.head.y = 0;
     }
   }
 
@@ -65,16 +77,16 @@ class Snake {
 
     switch (this.direction) {
       case "KeyW":
-        this.segments[0].y -= 1;
+        this.head.y -= 1;
         break;
       case "KeyS":
-        this.segments[0].y += 1;
+        this.head.y += 1;
         break;
       case "KeyA":
-        this.segments[0].x -= 1;
+        this.head.x -= 1;
         break;
       case "KeyD":
-        this.segments[0].x += 1;
+        this.head.x += 1;
         break;
     }
   }
@@ -96,7 +108,6 @@ let food = {
   direction: null,
 };
 
-
 // function collision(s1, s2) {
 //   if (s1.x == s2.x && s1.y == s2.y) {
 //     s1.color = "violet";
@@ -111,9 +122,10 @@ function render() {
   game.clear();
   snake.draw();
   snake.move();
+  snake.teleport();
 }
 
-setInterval(render, 500);
+setInterval(render, 100);
 
 document.onkeypress = function (e) {
   console.log(e.code);
