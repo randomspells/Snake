@@ -6,9 +6,22 @@ html, body {
   margin: 0;
 }
 
-#ok {
-  font-family: inherit;
-  font-size: 2em;
-  padding: 0.6em 1.2em;
-  border: none;
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  color: #343434;
+  margin: 20px;
+}
+
+span {
+  color: tomato;
+}
+
+#field {
+  width: 700px;
+  height: 700px;
 }

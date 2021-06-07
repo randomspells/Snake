@@ -1,12 +1,7 @@
 let field = document.getElementById("field");
 let ctx = field.getContext("2d");
-
-function drawField() {
-  field.width = innerWidth;
-  field.height = innerHeight;
-}
-
-drawField();
+field.width = 700;
+field.height = 700;
 
 class Segment {
   constructor(x, y, i) {
@@ -30,7 +25,7 @@ class Snake {
   }
 
   drawing() {
-    let size = 20;
+    let size = 25;
     ctx.fillStyle = this.color;
     for (let seg of this.segments) {
       ctx.fillRect(seg.x * size, seg.y * size, size, size);
@@ -38,25 +33,26 @@ class Snake {
   }
 
   moving() {
-    if (!this.sleep) {
-      for (let i = this.length; i > 0; i--) {
-        this.segments[i].x = this.segments[i - 1].x;
-        this.segments[i].y = this.segments[i - 1].y;
-      }
-      switch (this.direction) {
-        case "KeyW":
-          this.segments[0].y -= 1;
-          break;
-        case "KeyS":
-          this.segments[0].y += 1;
-          break;
-        case "KeyA":
-          this.segments[0].x -= 1;
-          break;
-        case "KeyD":
-          this.segments[0].x += 1;
-          break;
-      }
+    if (this.sleep) return;
+
+    for (let i = this.length; i > 0; i--) {
+      this.segments[i].x = this.segments[i - 1].x;
+      this.segments[i].y = this.segments[i - 1].y;
+    }
+
+    switch (this.direction) {
+      case "KeyW":
+        this.segments[0].y -= 1;
+        break;
+      case "KeyS":
+        this.segments[0].y += 1;
+        break;
+      case "KeyA":
+        this.segments[0].x -= 1;
+        break;
+      case "KeyD":
+        this.segments[0].x += 1;
+        break;
     }
   }
 }
@@ -78,7 +74,8 @@ let food = {
 };
 
 function clearField() {
-  ctx.clearRect(0, 0, field.width, field.height);
+  ctx.fillStyle = '#343434';
+  ctx.fillRect(0, 0, field.width, field.height);
 }
 
 // function collision(s1, s2) {
@@ -97,14 +94,19 @@ function render() {
   snake.moving();
 }
 
-setInterval(render, 400);
+setInterval(render, 200);
 
 document.onkeypress = function (e) {
   console.log(e.code);
-  if (e.code == 'KeyW' || e.code == 'KeyS' || e.code == 'KeyA' || e.code == 'KeyD') {
+  if (
+    e.code == "KeyW" ||
+    e.code == "KeyS" ||
+    e.code == "KeyA" ||
+    e.code == "KeyD"
+  ) {
     snake.listenInput(e.code);
     snake.sleep = false;
-  } else if (e.code == 'Space') {
+  } else if (e.code == "Space") {
     snake.sleep = true;
   }
 };
