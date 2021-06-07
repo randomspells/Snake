@@ -1,7 +1,30 @@
-let field = document.getElementById("field");
-let ctx = field.getContext("2d");
-field.width = 700;
-field.height = 700;
+// let field = document.getElementById("canvas");
+// let ctx = field.getContext("2d");
+// field.width = 700;
+// field.height = 700;
+
+class Game {
+  constructor(size, scale) {
+    this.size = size;
+    this.canvas = document.getElementById("canvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.draw(scale);
+  }
+
+  clear() {
+    this.ctx.fillStyle = '#343434';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.width);
+  }
+
+  draw(scale) {
+    this.canvas.width = this.size * scale;
+    this.canvas.height = this.size * scale;
+  }
+  
+}
+
+let game = new Game(20, 25);
+
 
 class Segment {
   constructor(x, y, i) {
@@ -24,15 +47,15 @@ class Snake {
     this.direction = key;
   }
 
-  drawing() {
+  draw() {
     let size = 25;
-    ctx.fillStyle = this.color;
+    game.ctx.fillStyle = this.color;
     for (let seg of this.segments) {
-      ctx.fillRect(seg.x * size, seg.y * size, size, size);
+      game.ctx.fillRect(seg.x * size, seg.y * size, size, size);
     }
   }
 
-  moving() {
+  move() {
     if (this.sleep) return;
 
     for (let i = this.length; i > 0; i--) {
@@ -73,10 +96,6 @@ let food = {
   direction: null,
 };
 
-function clearField() {
-  ctx.fillStyle = '#343434';
-  ctx.fillRect(0, 0, field.width, field.height);
-}
 
 // function collision(s1, s2) {
 //   if (s1.x == s2.x && s1.y == s2.y) {
@@ -89,12 +108,12 @@ function clearField() {
 let snake = new Snake(allSegments, "tomato");
 
 function render() {
-  clearField();
-  snake.drawing();
-  snake.moving();
+  game.clear();
+  snake.draw();
+  snake.move();
 }
 
-setInterval(render, 200);
+setInterval(render, 500);
 
 document.onkeypress = function (e) {
   console.log(e.code);
