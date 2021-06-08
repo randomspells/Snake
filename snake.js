@@ -4,6 +4,7 @@ const SCALE = 30;
 class Game {
   constructor(size, scale) {
     this.size = size;
+    this.score = 0;
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
     this.draw(scale);
@@ -18,9 +19,19 @@ class Game {
     this.canvas.width = this.size * scale;
     this.canvas.height = this.size * scale;
   }
-}
 
-let game = new Game(SIZE, SCALE);
+  drawScore() {
+    let score = document.getElementById("score");
+    score.innerHTML = snake.counter;
+  }
+
+  gameover() {
+    if (snake.dead == true) {
+      this.ctx.fillStyle = "black";
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.width);
+    }
+  }
+}
 
 class Segment {
   constructor(x, y, i) {
@@ -31,46 +42,48 @@ class Segment {
 }
 
 class Snake {
-  constructor(segments, color) {
-    this.segments = segments;
+  constructor(color) {
+    this.head = new Segment(SIZE / 2, SIZE / 2, 0);
+    this.segments = [this.head];
     this.color = color;
-    this.direction = null;
-    this.length = this.segments.length - 1;
+    this.direction = "KeyA";
+    this.counter = 0;
     this.sleep = true;
+    this.dead = false;
     this.head = this.segments[0];
   }
 
   listenInput(key) {
-    this.direction = key;
+    if (this.direction == "KeyW" && key != "KeyS") {
+      this.direction = key;
+    }
+    if (this.direction == "KeyS" && key != "KeyW") {
+      this.direction = key;
+    }
+    if (this.direction == "KeyA" && key != "KeyD") {
+      this.direction = key;
+    }
+    if (this.direction == "KeyD" && key != "KeyA") {
+      this.direction = key;
+    }
+    if (this.direction == null) {
+      this.direction = key;
+    }
   }
 
   draw() {
-    let size = SCALE;
+    let scale = SCALE;
     game.ctx.fillStyle = this.color;
     for (let seg of this.segments) {
-      game.ctx.fillRect(seg.x * size, seg.y * size, size, size);
-    }
-  }
-
-  teleport() {
-    if (this.head.x < 0) {
-      this.head.x = SIZE - 1;
-    }
-    if (this.head.x > SIZE - 1) {
-      this.head.x = 0;
-    }
-    if (this.head.y < 0) {
-      this.head.y = SIZE - 1;
-    }
-    if (this.head.y > SIZE - 1) {
-      this.head.y = 0;
+      game.ctx.fillRect(seg.x * scale, seg.y * scale, scale, scale);
     }
   }
 
   move() {
     if (this.sleep) return;
+    if (this.dead) return;
 
-    for (let i = this.length; i > 0; i--) {
+    for (let i = this.segments.length - 1; i > 0; i--) {
       this.segments[i].x = this.segments[i - 1].x;
       this.segments[i].y = this.segments[i - 1].y;
     }
@@ -90,42 +103,102 @@ class Snake {
         break;
     }
   }
+
+  teleport() {
+    if (this.head.x < 0) {
+      this.head.x = SIZE - 1;
+    }
+    if (this.head.x > SIZE - 1) {
+      this.head.x = 0;
+    }
+    if (this.head.y < 0) {
+      this.head.y = SIZE - 1;
+    }
+    if (this.head.y > SIZE - 1) {
+      this.head.y = 0;
+    }
+  }
+
+  grow() {
+    if (this.head.x == food.x && this.head.y == food.y) {
+      //snake grow and food re-render
+      console.log("true");
+      food.replace();
+      if (this.direction == "KeyW") {
+        this.segments.push(
+          new Segment(this.head.x, this.head.y + 1, ++this.counter)
+        );
+      }
+      if (this.direction == "KeyS") {
+        this.segments.push(
+          new Segment(this.head.x, this.head.y - 1, ++this.counter)
+        );
+      }
+      if (this.direction == "KeyA") {
+        this.segments.push(
+          new Segment(this.head.x + 1, this.head.y, ++this.counter)
+        );
+      }
+      if (this.direction == "KeyD") {
+        this.segments.push(
+          new Segment(this.head.x - 1, this.head.y, ++this.counter)
+        );
+      }
+      console.log(this.segments);
+    }
+  }
+
+  die() {
+    for (let i = 1; i <= this.segments.length - 1; i++) {
+      if (
+        this.head.x == this.segments[i].x &&
+        this.head.y == this.segments[i].y
+      ) {
+        let gameover = document.getElementById("gameover");
+        gameover.style.visibility = "visible";
+        this.dead = true;
+      }
+    }
+  }
 }
 
-let allSegments = [];
+class Food {
+  constructor(color) {
+    this.x = Math.round(Math.random() * (SIZE - 1));
+    this.y = Math.round(Math.random() * (SIZE - 1));
+    this.color = color;
+    this.scale = SCALE;
+    console.log(this.x + " " + this.y);
+  }
 
-for (let i = 0; i < 3; i++) {
-  allSegments.push(new Segment(0 + i, 0, i));
+  draw() {
+    game.ctx.fillStyle = this.color;
+    game.ctx.fillRect(this.x * SCALE, this.y * SCALE, SCALE, SCALE);
+  }
+
+  replace() {
+    this.x = Math.round(Math.random() * (SIZE - 1));
+    this.y = Math.round(Math.random() * (SIZE - 1));
+  }
 }
 
-console.log(allSegments);
-
-let food = {
-  x: 300,
-  y: 300,
-  size: 50,
-  color: "red",
-  direction: null,
-};
-
-// function collision(s1, s2) {
-//   if (s1.x == s2.x && s1.y == s2.y) {
-//     s1.color = "violet";
-//   } else {
-//     s1.color = "blue";
-//   }
-// }
-
-let snake = new Snake(allSegments, "tomato");
+let game = new Game(SIZE, SCALE);
+let snake = new Snake("tomato");
+let food = new Food("wheat");
 
 function render() {
   game.clear();
   snake.draw();
+  food.draw();
   snake.move();
   snake.teleport();
+  snake.grow();
+  snake.die();
+  game.gameover();
+  game.drawScore();
 }
 
-setInterval(render, 100);
+setInterval(render, 200);
 
 document.onkeypress = function (e) {
   console.log(e.code);

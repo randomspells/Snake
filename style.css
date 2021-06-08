@@ -12,9 +12,27 @@ html, body {
   align-items: center;
 }
 
-h1 {
+h1,h3 {
   color: #343434;
   margin: 20px;
+}
+
+h1 {
+  font-size: 2.5em;
+}
+
+h2 {
+  position: relative;
+  top: -500px;
+  text-align: center;
+  color: tomato;
+  font-size: 2em;
+  visibility: hidden;
+  transition: visibility 2s;
+}
+
+h3 {
+  font-size: 1.5em;
 }
 
 span {
