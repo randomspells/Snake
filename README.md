@@ -5,4 +5,4 @@
 - download repo and run index.html
 - enjoy bugs!
 
-### [Snake App on Netlify]()
+### [Snake App on Netlify](https://junesnake.netlify.app)
