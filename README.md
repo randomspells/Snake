@@ -1,4 +1,4 @@
-# Snake App
+# Snake JS App
 ## Simple snake game
 
 ### How to use
